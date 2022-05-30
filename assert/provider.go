@@ -7,9 +7,9 @@ import (
 // Provider -
 func Provider() *schema.Provider {
 	return &schema.Provider{
-		ResourcesMap: map[string]*schema.Resource{
-			"assert_equal": assertEqualResource(),
+		ResourcesMap: map[string]*schema.Resource{},
+		DataSourcesMap: map[string]*schema.Resource{
+			"assert_equal": assertEqualDataSource(),
 		},
-		DataSourcesMap: map[string]*schema.Resource{},
 	}
 }

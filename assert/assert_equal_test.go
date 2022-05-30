@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccResource_basic(t *testing.T) {
-	dsn := "assert_equal.test"
+	dsn := "data.assert_equal.my_first_test"
 	resource.UnitTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -22,7 +22,7 @@ func TestAccResource_basic(t *testing.T) {
 }
 
 const testAccResourceConfig_basic = `
-resource "assert_equal" "test" {
+data "assert_equal" "my_first_test" {
 	current = []
 	expected = []
 }

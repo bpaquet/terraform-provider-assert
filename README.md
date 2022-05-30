@@ -1,4 +1,4 @@
-# Terraform Provider Comparer
+# Terraform Provider Assert
 
 Run the following command to build the provider.
 

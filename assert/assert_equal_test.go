@@ -1,4 +1,4 @@
-package comparer
+package assert
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccResource_basic(t *testing.T) {
-	dsn := "comparer_equal.test"
+	dsn := "assert_equal.test"
 	resource.UnitTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
@@ -22,7 +22,7 @@ func TestAccResource_basic(t *testing.T) {
 }
 
 const testAccResourceConfig_basic = `
-resource "comparer_equal" "test" {
+resource "assert_equal" "test" {
 	current = []
 	expected = []
 }

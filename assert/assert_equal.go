@@ -1,4 +1,4 @@
-package comparer
+package assert
 
 import (
 	"fmt"
@@ -6,9 +6,9 @@ import (
 	"math/rand"
 )
 
-func compareEqualResource() *schema.Resource {
+func assertEqualResource() *schema.Resource {
 	return &schema.Resource{
-		Description: `The ` + "`compare_equal`" + ` resource compare the two list provided as arugments, and fail if they are not equal.`,
+		Description: `The ` + "`assert_equal`" + ` resource compares the two lists provided as arugments, and fail during apply if they are not equal.`,
 
 		Create: resourceCreate,
 		Read:   resourceRead,
@@ -16,7 +16,7 @@ func compareEqualResource() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"current": {
-				Description: "A list describing the current state. Example: a list of instance ids extracted from resources declared in the same workspace.",
+				Description: "A list describing the current state. Example: a list of instance ids frem a data source.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				ForceNew:    true,
@@ -26,7 +26,7 @@ func compareEqualResource() *schema.Resource {
 			},
 
 			"expected": {
-				Description: "A list describing the expected state. Example: a list of instance ids frem a data source.",
+				Description: "A list describing the expected state. Example: a list of instance ids extracted from resources declared in the same workspace.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				ForceNew:    true,

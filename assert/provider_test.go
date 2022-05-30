@@ -1,4 +1,4 @@
-package comparer
+package assert
 
 import (
 	"testing"
@@ -12,7 +12,7 @@ var testAccProvider *schema.Provider
 func init() {
 	testAccProvider = Provider()
 	testAccProviders = map[string]*schema.Provider{
-		"comparer": testAccProvider,
+		"assert": testAccProvider,
 	}
 }
 

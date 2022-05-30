@@ -1,4 +1,4 @@
-package comparer
+package assert
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -8,7 +8,7 @@ import (
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		ResourcesMap: map[string]*schema.Resource{
-			"comparer_equal": compareEqualResource(),
+			"assert_equal": assertEqualResource(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{},
 	}

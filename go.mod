@@ -1,4 +1,4 @@
-module terraform-provider-comparer
+module terraform-provider-assert
 
 go 1.18
 

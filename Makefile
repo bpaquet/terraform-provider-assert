@@ -1,7 +1,7 @@
 TEST?=$$(go list ./... | grep -v 'vendor')
 HOSTNAME=github.com
 NAMESPACE=bpaquet
-NAME=comparer
+NAME=assert
 BINARY=terraform-provider-${NAME}
 VERSION=0.1
 OS_ARCH=darwin_amd64
@@ -37,7 +37,7 @@ testacc:
 	TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m   
 
 fmt:
-	cd comparer && go fmt .
+	cd assert && go fmt .
 
 doc:
 	go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs

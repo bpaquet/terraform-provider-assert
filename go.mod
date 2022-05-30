@@ -2,7 +2,10 @@ module terraform-provider-assert
 
 go 1.18
 
-require github.com/hashicorp/terraform-plugin-sdk/v2 v2.16.0
+require (
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.16.0
+	github.com/stretchr/testify v1.7.0
+)
 
 require (
 	github.com/Masterminds/goutils v1.1.0 // indirect
@@ -48,6 +51,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oklog/run v1.0.0 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/posener/complete v1.1.1 // indirect
 	github.com/russross/blackfriday v1.6.0 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
@@ -64,4 +68,5 @@ require (
 	google.golang.org/genproto v0.0.0-20200711021454-869866162049 // indirect
 	google.golang.org/grpc v1.45.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
 )

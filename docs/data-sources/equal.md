@@ -17,8 +17,8 @@ The `assert_equal` resource compares the two lists provided as arugments, and fa
 
 ### Required
 
-- `current` (Set of String) A list describing the current state. Example: a list of instance ids frem a data source.
-- `expected` (Set of String) A list describing the expected state. Example: a list of instance ids extracted from resources declared in the same workspace.
+- `current` (List of String) A list describing the current state. Example: a list of instance ids frem a data source.
+- `expected` (List of String) A list describing the expected state. Example: a list of instance ids extracted from resources declared in the same workspace.
 
 ### Read-Only
 

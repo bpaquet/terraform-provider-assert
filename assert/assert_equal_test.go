@@ -69,3 +69,23 @@ data "assert_equal" "my_first_test" {
 	expected = [1, 2]
 }
 `
+
+func TestAccResource_not_equal_with_error_message(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccResourceConfig_not_equal_with_error_message,
+				ExpectError: regexp.MustCompile("This is an incredible error mesaage"),
+			},
+		},
+	})
+}
+
+const testAccResourceConfig_not_equal_with_error_message = `
+data "assert_equal" "my_first_test" {
+	current = [1, 2, 3]
+	expected = [1, 2]
+	message = "This is an incredible error mesaage"
+}
+`

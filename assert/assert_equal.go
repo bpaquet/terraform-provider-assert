@@ -32,6 +32,12 @@ func assertEqualDataSource() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+
+			"message": {
+				Description: "The error message if the expected != current",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
 }
@@ -49,6 +55,6 @@ func resourceRead(d *schema.ResourceData, meta any) error {
 	d.SetId(fmt.Sprintf("%d", rand.Int()))
 
 	t := &handler{}
-	assert.ElementsMatch(t, d.Get("current"), d.Get("expected"))
+	assert.ElementsMatch(t, d.Get("current"), d.Get("expected"), d.Get("message"))
 	return t.result
 }

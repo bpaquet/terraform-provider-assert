@@ -28,7 +28,7 @@ resource "aws_instance" "instance3" {
 }
 ```
 
-You can validate there is no rogue instance.
+You can validate there is no undeclared instance with:
 
 ```
 data "aws_instances" "all" {

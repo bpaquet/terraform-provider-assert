@@ -34,7 +34,7 @@ You can validate there is no undeclared instance with:
 data "aws_instances" "all" {
   filter {
     name   = "vpc-id"
-    values = ["<your_vpc_id"]
+    values = ["<your_vpc_id>"]
   }
 }
 

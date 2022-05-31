@@ -30,7 +30,7 @@ jobs:
       -
         name: check no diff
         run: |
-          if [[] "$(git diff)" = "" ]]; then
+          if [[ "$(git diff)" = "" ]]; then
             exit 0
           else
             git diff

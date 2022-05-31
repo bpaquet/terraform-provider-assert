@@ -1,6 +1,7 @@
 package assert
 
 import (
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -24,4 +25,10 @@ func TestProvider(t *testing.T) {
 
 func TestProvider_impl(t *testing.T) {
 	var _ *schema.Provider = Provider()
+}
+
+func TestMain(m *testing.M) {
+	MockedPublishApi = nil
+	code := m.Run()
+	os.Exit(code)
 }

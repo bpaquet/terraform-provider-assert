@@ -2,17 +2,17 @@
 layout: ""
 page_title: "Provider: Assert"
 description: |-
-  The assert provider add a datasource to implement an `assert_equal` in terraform.
+  The assert provider adds a datasource to implement an `assert_equal` in terraform.
 ---
 
 ## Assert Provider
 
-The assert provider add a datasource to implement an `assert_equal` in terraform.
+The assert provider adds a datasource to implement an `assert_equal` in terraform.
 
 ### But why?
 
 Mainly for compliance. Imagine you have 3 ec2 instances configured in terraform, and you need
-to be sure you have only these 3 instances running in your aws account.
+to be sure you have only these 3 instances running in your AWS account.
 
 ```
 resource "aws_instance" "instance1" {
@@ -44,8 +44,17 @@ data "assert_equal" "no_undeclared_instances" {
 }
 ```
 
-### What happen when the assertion fail
+### What happens when the assertion fails
 
-The terraform operation (`plan` or `apply`) will throw an error.
+The terraform operation (`plan` or `apply`) will throw an error if `fail_on_assert` is set to `true`. This is the default behavior.
+
+Instead of failing, the provider can publish a message to an [AWS SNS](https://aws.amazon.com/sns/) topic. To do this, you have to
+
+* Setup AWS authentication. The simplest way is to use an [AWS IAM Instance profile](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html). But [any method](https://aws.github.io/aws-sdk-go-v2/docs/configuring-sdk/#specifying-credentials) supported by the Go AWS SDK v2 will work.
+* Set 'sns_topic_arn'
+* The message can be customized by providing [Go templates](https://pkg.go.dev/text/template) in `sns_subject_template` and `sns_body_template`. Available variables are
+  * `Message`: The error message from the failing assertion
+  * `Current`: The current value
+  * `Expected`: The expected value
 
 {{ .SchemaMarkdown | trimspace }}

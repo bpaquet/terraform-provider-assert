@@ -1,22 +1,27 @@
 package assert
 
 import (
+	"bytes"
+	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
+	"text/template"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/stretchr/testify/assert"
 )
 
 func assertEqualDataSource() *schema.Resource {
 	return &schema.Resource{
-		Description: `The ` + "`assert_equal`" + ` resource compares the two lists provided as arugments, and fail during apply if they are not equal.`,
+		Description: `The ` + "`assert_equal`" + ` resource compares the two lists provided as arguments, and fails if they are not equal.`,
 
-		Read: resourceRead,
+		ReadContext: resourceRead,
 
 		Schema: map[string]*schema.Schema{
 			"current": {
-				Description: "A list describing the current state. Example: a list of instance ids frem a data source.",
+				Description: "A list describing the current state. Example: a list of instance ids from a data source.",
 				Type:        schema.TypeList,
 				Required:    true,
 				Elem: &schema.Schema{
@@ -51,10 +56,49 @@ func (handler *handler) Errorf(format string, args ...any) {
 	handler.result = fmt.Errorf(format, args...)
 }
 
-func resourceRead(d *schema.ResourceData, meta any) error {
+type templateParams struct {
+	Message  string
+	Expected string
+	Current  string
+}
+
+func runTemplate(tmpl *template.Template, params *templateParams) (*string, error) {
+	var doc bytes.Buffer
+	if err := tmpl.Execute(&doc, params); err != nil {
+		return nil, err
+	}
+	result := doc.String()
+	return &result, nil
+}
+
+func resourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	d.SetId(fmt.Sprintf("%d", rand.Int()))
 
 	t := &handler{}
 	assert.ElementsMatch(t, d.Get("current"), d.Get("expected"), d.Get("message"))
-	return t.result
+	providerConfig := m.(*providerConfig)
+	if providerConfig.publishApi != nil && t.result != nil {
+		params := &templateParams{
+			Message:  d.Get("message").(string),
+			Expected: fmt.Sprintf("%v", d.Get("expected")),
+			Current:  fmt.Sprintf("%v", d.Get("current")),
+		}
+		msg, err := runTemplate(providerConfig.snsBodyTemplate, params)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		subject, err := runTemplate(providerConfig.snsSubjectTemplate, params)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		err = providerConfig.publishApi.PublishMessage(ctx, msg, subject)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	}
+	if providerConfig.failOnAssert {
+		return diag.FromErr(t.result)
+	} else {
+		return nil
+	}
 }

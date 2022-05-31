@@ -3,12 +3,12 @@
 page_title: "assert_equal Data Source - terraform-provider-assert"
 subcategory: ""
 description: |-
-  The assert_equal resource compares the two lists provided as arugments, and fail during apply if they are not equal.
+  The assert_equal resource compares the two lists provided as arguments, and fails if they are not equal.
 ---
 
 # assert_equal (Data Source)
 
-The `assert_equal` resource compares the two lists provided as arugments, and fail during apply if they are not equal.
+The `assert_equal` resource compares the two lists provided as arguments, and fails if they are not equal.
 
 
 
@@ -17,7 +17,7 @@ The `assert_equal` resource compares the two lists provided as arugments, and fa
 
 ### Required
 
-- `current` (List of String) A list describing the current state. Example: a list of instance ids frem a data source.
+- `current` (List of String) A list describing the current state. Example: a list of instance ids from a data source.
 - `expected` (List of String) A list describing the expected state. Example: a list of instance ids extracted from resources declared in the same workspace.
 
 ### Optional

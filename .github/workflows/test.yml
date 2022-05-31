@@ -29,4 +29,11 @@ jobs:
         run: make doc
       -
         name: check no diff
-        run: if [ "$(git diff)" = "" ]; then exit 0 else echo "Something has changed, please run make fmt doc; exit 1; fi"
+        run: |
+          if [[] "$(git diff)" = "" ]]; then
+            exit 0
+          else
+            git diff
+            echo "Something has changed, please run make fmt doc
+            exit 1
+          fi

@@ -70,6 +70,31 @@ data "assert_equal" "my_first_test" {
 }
 `
 
+func TestAccResource_not_equal_no_fail(t *testing.T) {
+	dsn := "data.assert_equal.my_first_test"
+	resource.UnitTest(t, resource.TestCase{
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConfig_not_equal_no_fail,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(dsn, "id"),
+				),
+			},
+		},
+	})
+}
+
+const testAccResourceConfig_not_equal_no_fail = `
+provider "assert" {
+	fail_on_assert = false
+}
+data "assert_equal" "my_first_test" {
+	current = [1, 2, 3]
+	expected = [1, 2]
+}
+`
+
 func TestAccResource_not_equal_with_error_message(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		Providers: testAccProviders,

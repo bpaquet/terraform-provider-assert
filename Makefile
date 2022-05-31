@@ -39,5 +39,8 @@ testacc:
 fmt:
 	cd assert && go fmt .
 
+lint:
+	golangci-lint run
+
 doc:
 	go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs

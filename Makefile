@@ -3,7 +3,7 @@ HOSTNAME=github.com
 NAMESPACE=bpaquet
 NAME=assert
 BINARY=terraform-provider-${NAME}
-VERSION=0.4.0
+VERSION=0.5.0
 OS_ARCH=darwin_amd64
 
 default: install

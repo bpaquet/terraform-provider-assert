@@ -23,13 +23,13 @@ func Provider() *schema.Provider {
 			"sns_body_template": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Default:     "Error: {{.Message}}",
+				Default:     "Error: {{.Message}}\nCurrent: {{.Current}}\nExpected: {{.Expected}}",
 				Description: "Template to build the body of the message for SNS notifications",
 			},
 			"sns_subject_template": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Default:     "Error: {{.Message}}\nCurrent: {{.Current}}\nExpected: {{.Expected}}",
+				Default:     "Error: {{.Message}}",
 				Description: "Template to build the subject of the message for SNS notifications",
 			},
 			"fail_on_assert": {

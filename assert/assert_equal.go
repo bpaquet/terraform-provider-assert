@@ -8,6 +8,7 @@ import (
 	"testing"
 	"text/template"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/stretchr/testify/assert"
@@ -62,7 +63,7 @@ type templateParams struct {
 	Current  string
 }
 
-func runTemplate(tmpl *template.Template, params *templateParams) (*string, error) {
+func executeTemplate(tmpl *template.Template, params *templateParams) (*string, error) {
 	var doc bytes.Buffer
 	if err := tmpl.Execute(&doc, params); err != nil {
 		return nil, err
@@ -83,15 +84,17 @@ func resourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) di
 			Expected: fmt.Sprintf("%v", d.Get("expected")),
 			Current:  fmt.Sprintf("%v", d.Get("current")),
 		}
-		msg, err := runTemplate(providerConfig.snsBodyTemplate, params)
+		body, err := executeTemplate(providerConfig.snsBodyTemplate, params)
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		subject, err := runTemplate(providerConfig.snsSubjectTemplate, params)
+		tflog.Debug(ctx, fmt.Sprintf("Sending SNS notification, body %s", *body))
+		subject, err := executeTemplate(providerConfig.snsSubjectTemplate, params)
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		err = providerConfig.publishApi.PublishMessage(ctx, msg, subject)
+		tflog.Debug(ctx, fmt.Sprintf("Sending SNS notification, subject %s", *subject))
+		err = providerConfig.publishApi.PublishMessage(ctx, body, subject)
 		if err != nil {
 			return diag.FromErr(err)
 		}

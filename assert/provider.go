@@ -3,16 +3,15 @@ package assert
 import (
 	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/sns"
 	"strings"
 	"text/template"
 
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/sns"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-// Provider -
 func Provider() *schema.Provider {
 	p := &schema.Provider{
 		Schema: map[string]*schema.Schema{
@@ -30,7 +29,7 @@ func Provider() *schema.Provider {
 			"sns_subject_template": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Default:     "Terraform Github provider assert error: {{.Message}}",
+				Default:     "Error: {{.Message}}\nCurrent: {{.Current}}\nExpected: {{.Expected}}",
 				Description: "Template to build the subject of the message for SNS notifications",
 			},
 			"fail_on_assert": {
@@ -50,12 +49,32 @@ func Provider() *schema.Provider {
 	return p
 }
 
+type PublishApi interface {
+	PublishMessage(ctx context.Context, subject, message *string) error
+}
+
+var MockedPublishApi *PublishApi = nil
+
+type realPublishApi struct {
+	snsTopicARN string
+	client      *sns.Client
+}
+
+func (r *realPublishApi) PublishMessage(ctx context.Context, subject, message *string) error {
+	input := &sns.PublishInput{
+		Message:  message,
+		Subject:  subject,
+		TopicArn: &r.snsTopicARN,
+	}
+	_, err := r.client.Publish(ctx, input)
+	return err
+}
+
 type providerConfig struct {
-	snsTopicARN        string
 	snsBodyTemplate    *template.Template
 	snsSubjectTemplate *template.Template
 	failOnAssert       bool
-	snsClient          *sns.Client
+	publishApi         PublishApi
 }
 
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
@@ -70,11 +89,9 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	}
 	failOnAssert := d.Get("fail_on_assert").(bool)
 	providerConfig := &providerConfig{
-		snsTopicARN:        snsTopicARN,
 		snsBodyTemplate:    snsBodyTemplate,
 		snsSubjectTemplate: snsSubjectTemplate,
 		failOnAssert:       failOnAssert,
-		snsClient:          nil,
 	}
 	if snsTopicARN != "" {
 		snsTopicARNSplitted := strings.Split(snsTopicARN, ":")
@@ -83,12 +100,19 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		}
 		region := snsTopicARNSplitted[3]
 
-		cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(region))
-		if err != nil {
-			return nil, diag.FromErr(err)
+		if MockedPublishApi == nil {
+			cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(region))
+			if err != nil {
+				return nil, diag.FromErr(err)
+			}
+			client := sns.NewFromConfig(cfg)
+			providerConfig.publishApi = &realPublishApi{
+				snsTopicARN: snsTopicARN,
+				client:      client,
+			}
+		} else {
+			providerConfig.publishApi = *MockedPublishApi
 		}
-		client := sns.NewFromConfig(cfg)
-		providerConfig.snsClient = client
 	}
 	return providerConfig, nil
 }

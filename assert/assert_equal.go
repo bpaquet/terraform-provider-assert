@@ -8,7 +8,6 @@ import (
 	"testing"
 	"text/template"
 
-	"github.com/aws/aws-sdk-go-v2/service/sns"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/stretchr/testify/assert"
@@ -78,7 +77,7 @@ func resourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) di
 	t := &handler{}
 	assert.ElementsMatch(t, d.Get("current"), d.Get("expected"), d.Get("message"))
 	providerConfig := m.(*providerConfig)
-	if providerConfig.snsClient != nil && t.result != nil {
+	if providerConfig.publishApi != nil && t.result != nil {
 		params := &templateParams{
 			Message:  d.Get("message").(string),
 			Expected: fmt.Sprintf("%v", d.Get("expected")),
@@ -92,12 +91,7 @@ func resourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) di
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		input := &sns.PublishInput{
-			Message:  msg,
-			Subject:  subject,
-			TopicArn: &providerConfig.snsTopicARN,
-		}
-		_, err = providerConfig.snsClient.Publish(ctx, input)
+		err = providerConfig.publishApi.PublishMessage(ctx, msg, subject)
 		if err != nil {
 			return diag.FromErr(err)
 		}

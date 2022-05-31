@@ -94,7 +94,7 @@ func resourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) di
 			return diag.FromErr(err)
 		}
 		tflog.Debug(ctx, fmt.Sprintf("Sending SNS notification, subject %s", *subject))
-		err = providerConfig.publishApi.PublishMessage(ctx, body, subject)
+		err = providerConfig.publishApi.PublishMessage(ctx, subject, body)
 		if err != nil {
 			return diag.FromErr(err)
 		}

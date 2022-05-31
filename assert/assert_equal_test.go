@@ -157,8 +157,7 @@ func TestAccResource_sns_send_message(t *testing.T) {
 		subject: nil,
 		message: nil,
 	}
-	var mock PublishApi
-	mock = api
+	var mock PublishApi = api
 	MockedPublishApi = &mock
 	dsn := "data.assert_equal.my_first_test"
 	resource.UnitTest(t, resource.TestCase{

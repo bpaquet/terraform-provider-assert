@@ -46,6 +46,15 @@ data "assert_equal" "no_undeclared_instances" {
 
 ### What happen when the assertion fail
 
-The terraform operation (`plan` or `apply`) will throw an error.
+The terraform operation (`plan` or `apply`) will throw an error if `fail_on_assert` is set to `true`. This is the default behavior.
+
+Instead of failing, the provider can publish a message to an [AWS SNS](https://aws.amazon.com/sns/) topic. To do this, you have to
+
+* Setup AWS authentication. Simplest way is to use an [AWS IAM Instance profile](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html). But [any method](https://aws.github.io/aws-sdk-go-v2/docs/configuring-sdk/#specifying-credentials) supported by the Go AWS SDK v2 will work.
+* Set 'sns_topic_arn'
+* The message can be customized by providing [Go templates](https://pkg.go.dev/text/template) in `sns_subject_template` and `sns_body_template`. Available variables are
+  * `Message`: The error message from the failing assertion
+  * `Current`: The current value
+  * `Expceted`: The expected value
 
 {{ .SchemaMarkdown | trimspace }}

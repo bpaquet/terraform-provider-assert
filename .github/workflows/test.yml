@@ -16,7 +16,7 @@ jobs:
         with:
           go-version: 1.18
       -
-        name: Run test
+        name: test
         run: make test
       -
         name: golangci-lint
@@ -34,6 +34,6 @@ jobs:
             exit 0
           else
             git diff
-            echo "Something has changed, please run make fmt doc
+            echo "Something has changed, please run make fmt doc"
             exit 1
           fi

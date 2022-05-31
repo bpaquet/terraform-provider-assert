@@ -15,13 +15,13 @@ import (
 
 func assertEqualDataSource() *schema.Resource {
 	return &schema.Resource{
-		Description: `The ` + "`assert_equal`" + ` resource compares the two lists provided as arugments, and fail during apply if they are not equal.`,
+		Description: `The ` + "`assert_equal`" + ` resource compares the two lists provided as arguments, and fails if they are not equal.`,
 
 		ReadContext: resourceRead,
 
 		Schema: map[string]*schema.Schema{
 			"current": {
-				Description: "A list describing the current state. Example: a list of instance ids frem a data source.",
+				Description: "A list describing the current state. Example: a list of instance ids from a data source.",
 				Type:        schema.TypeList,
 				Required:    true,
 				Elem: &schema.Schema{

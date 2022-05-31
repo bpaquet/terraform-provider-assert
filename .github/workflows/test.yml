@@ -18,6 +18,15 @@ jobs:
       -
         name: Run test
         run: make test
-
-      - name: golangci-lint
+      -
+        name: golangci-lint
         uses: golangci/golangci-lint-action@v3
+      -
+        name: fmt
+        run: make fmt
+      -
+        name: doc
+        run: make doc
+      -
+        name: check no diff
+        run: if [ "$(git diff)" = "" ]; then exit 0 else echo "Something has changed, please run make fmt doc; exit 1; fi"

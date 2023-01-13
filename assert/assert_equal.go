@@ -76,7 +76,7 @@ func resourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) di
 	d.SetId(fmt.Sprintf("%d", rand.Int()))
 
 	t := &handler{}
-	assert.ElementsMatch(t, d.Get("current"), d.Get("expected"), d.Get("message"))
+	assert.ElementsMatch(t, d.Get("expected"), d.Get("current"), d.Get("message"))
 	providerConfig := m.(*providerConfig)
 	if providerConfig.publishApi != nil && t.result != nil {
 		params := &templateParams{
